@@ -64,4 +64,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     //Lottie
     implementation("com.airbnb.android:lottie:6.4.0")
+    //Volley
+    implementation("com.android.volley:volley:1.2.1")
 }
