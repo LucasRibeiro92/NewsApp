@@ -1,5 +1,6 @@
 package com.example.newsapp.domain.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
@@ -12,6 +13,7 @@ import com.example.newsapp.domain.viewmodel.ArticleViewModel
 
 class ArticleAdapter(
     private var articles: List<ArticleEntity>,
+    private val context: Context,
     private val articleViewModel: ArticleViewModel,
     private val owner: LifecycleOwner,
     private val onArticleClick: (ArticleEntity) -> Unit,

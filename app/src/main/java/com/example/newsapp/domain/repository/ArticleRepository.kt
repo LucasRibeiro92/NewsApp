@@ -5,7 +5,6 @@ import com.example.newsapp.domain.data.db.ArticleDao
 import com.example.newsapp.domain.data.db.ArticleEntity
 import com.example.newsapp.utils.Constants.API_KEY
 import com.example.newsapp.utils.Constants.API_LOCALE
-import com.example.newsapp.utils.Notifications
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
