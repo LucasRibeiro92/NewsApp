@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.R
 import com.example.newsapp.domain.adapter.ArticleAdapter
 import com.example.newsapp.domain.viewmodel.ArticleViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-
     private val articleViewModel: ArticleViewModel by viewModel()
     private lateinit var rvArticleMain: RecyclerView
     private lateinit var articleAdapter: ArticleAdapter
@@ -39,5 +39,10 @@ class MainActivity : AppCompatActivity() {
                 articleAdapter.updateArticles(it)
             }
         })
+
+        // Swipe to refresh
+        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).setOnRefreshListener {
+            articleViewModel.fetchArticles()
+        }
     }
 }

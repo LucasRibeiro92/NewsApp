@@ -5,15 +5,16 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.newsapp.utils.Constants.ARTICLE_TABLE
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArticleDao {
     @Query("SELECT * FROM $ARTICLE_TABLE")
-    suspend fun getAll(): List<ArticleEntity>
+    fun getAllFavorites(): Flow<MutableList<ArticleEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg articles: ArticleEntity)
+    fun insert(article: ArticleEntity)
 
-    @Query("DELETE FROM $ARTICLE_TABLE")
-    suspend fun deleteAll()
+    @Query("DELETE FROM $ARTICLE_TABLE WHERE url = :url")
+    fun deleteByUrl(url: String): Int
 }

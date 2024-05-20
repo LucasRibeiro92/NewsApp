@@ -1,42 +1,51 @@
 package com.example.newsapp.domain.repository
 
-import android.content.Context
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import com.example.newsapp.domain.data.api.ArticleRetrofitService
 import com.example.newsapp.domain.data.db.ArticleDao
 import com.example.newsapp.domain.data.db.ArticleEntity
-import com.example.newsapp.utils.Constants.API_BASE_URL
 import com.example.newsapp.utils.Constants.API_KEY
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ArticleRepository(private val context: Context, private val articleDao: ArticleDao) {
+class ArticleRepository(
+    private val apiService: ArticleRetrofitService,
+    private val articleDao: ArticleDao
+) {
 
-    private val requestQueue: RequestQueue = Volley.newRequestQueue(context)
-
-    suspend fun fetchArticles() {
+    suspend fun fetchNewsArticles(onSuccess: (List<ArticleEntity>) -> Unit, onError: (Exception) -> Unit) {
         withContext(Dispatchers.IO) {
-            val url = "$API_BASE_URL?country=us&apiKey=$API_KEY"
-            val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                { response ->
-                    val articlesJson = response.getJSONArray("articles").toString()
-                    val listType = object : TypeToken<List<ArticleEntity>>() {}.type
-                    val articles: List<ArticleEntity> = Gson().fromJson(articlesJson, listType)
-                    articleDao.insertAll(*articles.toTypedArray())
-                },
-                { error ->
-                    // Handle error
-                })
-            requestQueue.add(jsonObjectRequest)
+            val call = apiService.getTopHeadlines("br", API_KEY)
+            try {
+                val response = call.execute()
+                if (response.isSuccessful) {
+                    val articles = response.body()?.articles ?: emptyList()
+                    onSuccess(articles)
+                } else {
+                    onError(Exception("Error: ${response.code()} ${response.message()}"))
+                }
+            } catch (e: Exception) {
+                onError(e)
+            }
         }
     }
 
-    suspend fun getSavedArticles(): List<ArticleEntity> {
-        return articleDao.getAll()
+    /*
+    suspend fun getAllFavorites(): List<ArticleEntity> {
+        return withContext(Dispatchers.IO) {
+            articleDao.getAllFavorites()
+        }
+    }
+    */
+    suspend fun addFavorite(article: ArticleEntity) {
+        withContext(Dispatchers.IO) {
+            articleDao.insert(article)
+        }
+    }
+
+    suspend fun removeFavorite(url: String) {
+        withContext(Dispatchers.IO) {
+            articleDao.deleteByUrl(url)
+        }
     }
 }
+

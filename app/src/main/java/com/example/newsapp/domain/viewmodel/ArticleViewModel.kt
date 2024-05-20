@@ -12,14 +12,41 @@ class ArticleViewModel(private val articleRepository: ArticleRepository) : ViewM
     private val _articles = MutableLiveData<List<ArticleEntity>>()
     val articles: LiveData<List<ArticleEntity>> = _articles
 
+    private val _favorites = MutableLiveData<List<ArticleEntity>>()
+    val favorites: LiveData<List<ArticleEntity>> = _favorites
+
     init {
         fetchArticles()
+        //loadFavorites()
     }
 
-    private fun fetchArticles() {
+    fun fetchArticles() {
         viewModelScope.launch {
-            articleRepository.fetchArticles()
-            _articles.postValue(articleRepository.getSavedArticles())
+            articleRepository.fetchNewsArticles(
+                onSuccess = { _articles.postValue(it) },
+                onError = { it.printStackTrace() }
+            )
+        }
+    }
+
+    /*
+    fun loadFavorites() {
+        viewModelScope.launch {
+            _favorites.postValue(articleRepository.getAllFavorites())
+        }
+    }
+    */
+    fun addFavorite(article: ArticleEntity) {
+        viewModelScope.launch {
+            articleRepository.addFavorite(article)
+            //loadFavorites()
+        }
+    }
+
+    fun removeFavorite(url: String) {
+        viewModelScope.launch {
+            articleRepository.removeFavorite(url)
+            //loadFavorites()
         }
     }
 }

@@ -18,9 +18,7 @@ class ArticleAdapter(private var articles: List<ArticleEntity>, private val onIt
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val article = articles[position]
-        holder.titleTextView.text = article.title
-        holder.descriptionTextView.text = article.description
-        holder.itemView.setOnClickListener { onItemClick(article) }
+        holder.bind(article, onItemClick)
     }
 
     override fun getItemCount() = articles.size
@@ -30,8 +28,14 @@ class ArticleAdapter(private var articles: List<ArticleEntity>, private val onIt
         notifyDataSetChanged()
     }
 
-    class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleTextView: TextView = view.findViewById(R.id.titleTextView)
-        val descriptionTextView: TextView = view.findViewById(R.id.descriptionTextView)
+    class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
+        private val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
+
+        fun bind(article: ArticleEntity, onItemClick: (ArticleEntity) -> Unit) {
+            titleTextView.text = article.title
+            descriptionTextView.text = article.description ?: ""
+            itemView.setOnClickListener { onItemClick(article) }
+        }
     }
 }
