@@ -4,6 +4,8 @@ import com.example.newsapp.domain.data.api.ArticleRetrofitService
 import com.example.newsapp.domain.data.db.ArticleDao
 import com.example.newsapp.domain.data.db.ArticleEntity
 import com.example.newsapp.utils.Constants.API_KEY
+import com.example.newsapp.utils.Constants.API_LOCALE
+import com.example.newsapp.utils.Notifications
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,7 +16,7 @@ class ArticleRepository(
 
     suspend fun fetchNewsArticles(onSuccess: (List<ArticleEntity>) -> Unit, onError: (Exception) -> Unit) {
         withContext(Dispatchers.IO) {
-            val call = apiService.getTopHeadlines("br", API_KEY)
+            val call = apiService.getTopHeadlines(API_LOCALE, API_KEY)
             try {
                 val response = call.execute()
                 if (response.isSuccessful) {
@@ -29,22 +31,22 @@ class ArticleRepository(
         }
     }
 
-    /*
-    suspend fun getAllFavorites(): List<ArticleEntity> {
-        return withContext(Dispatchers.IO) {
-            articleDao.getAllFavorites()
-        }
-    }
-    */
-    suspend fun addFavorite(article: ArticleEntity) {
+    suspend fun toggleFavorite(article: ArticleEntity) {
         withContext(Dispatchers.IO) {
-            articleDao.insert(article)
+            val existingArticle = articleDao.getArticleByUrl(article.url)
+            if (existingArticle != null) {
+                // Article is already a favorite, remove it from the database
+                articleDao.deleteByUrl(article.url)
+            } else {
+                // Article is not a favorite, add it to the database
+                articleDao.insert(article)
+            }
         }
     }
 
-    suspend fun removeFavorite(url: String) {
-        withContext(Dispatchers.IO) {
-            articleDao.deleteByUrl(url)
+    suspend fun isArticleFavorite(url: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            articleDao.getArticleByUrl(url) != null
         }
     }
 }

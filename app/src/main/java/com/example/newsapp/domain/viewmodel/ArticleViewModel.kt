@@ -1,5 +1,6 @@
 package com.example.newsapp.domain.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,17 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.newsapp.domain.data.db.ArticleEntity
 import com.example.newsapp.domain.repository.ArticleRepository
 import kotlinx.coroutines.launch
-class ArticleViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+class ArticleViewModel(
+    private val articleRepository: ArticleRepository
+) : ViewModel() {
 
     private val _articles = MutableLiveData<List<ArticleEntity>>()
-    val articles: LiveData<List<ArticleEntity>> = _articles
-
-    private val _favorites = MutableLiveData<List<ArticleEntity>>()
-    val favorites: LiveData<List<ArticleEntity>> = _favorites
+    val articles: LiveData<List<ArticleEntity>> get() = _articles
 
     init {
         fetchArticles()
-        //loadFavorites()
     }
 
     fun fetchArticles() {
@@ -29,24 +30,20 @@ class ArticleViewModel(private val articleRepository: ArticleRepository) : ViewM
         }
     }
 
-    /*
-    fun loadFavorites() {
+    fun toggleFavorite(article: ArticleEntity) {
         viewModelScope.launch {
-            _favorites.postValue(articleRepository.getAllFavorites())
-        }
-    }
-    */
-    fun addFavorite(article: ArticleEntity) {
-        viewModelScope.launch {
-            articleRepository.addFavorite(article)
-            //loadFavorites()
+            articleRepository.toggleFavorite(article)
+            fetchArticles()
         }
     }
 
-    fun removeFavorite(url: String) {
+    fun isArticleFavorite(url: String): LiveData<Boolean> {
+        val resultLiveData = MutableLiveData<Boolean>()
         viewModelScope.launch {
-            articleRepository.removeFavorite(url)
-            //loadFavorites()
+            val isFavorite = articleRepository.isArticleFavorite(url)
+            resultLiveData.postValue(isFavorite)
         }
+        return resultLiveData
     }
+
 }

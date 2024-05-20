@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.newsapp.utils.Constants.ARTICLE_DATABASE
 
-@Database(entities = [ArticleEntity::class], version = 1)
+@Database(entities = [ArticleEntity::class], version = 2)
 abstract class ArticleDatabase : RoomDatabase() {
 
     abstract fun articleDao(): ArticleDao
@@ -22,6 +22,7 @@ abstract class ArticleDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context.applicationContext,
                 ArticleDatabase::class.java, ARTICLE_DATABASE)
+                .fallbackToDestructiveMigration()
                 .build()
     }
 }

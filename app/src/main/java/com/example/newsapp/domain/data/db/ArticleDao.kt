@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArticleDao {
-    @Query("SELECT * FROM $ARTICLE_TABLE")
-    fun getAllFavorites(): Flow<MutableList<ArticleEntity>>
+    @Query("SELECT * FROM $ARTICLE_TABLE WHERE url = :url")
+    fun getArticleByUrl(url: String): ArticleEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(article: ArticleEntity)
