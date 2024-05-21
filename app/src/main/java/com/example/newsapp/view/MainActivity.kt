@@ -1,4 +1,4 @@
-package com.example.newsapp.ui
+package com.example.newsapp.view
 
 import android.content.Intent
 import android.net.Uri
@@ -6,8 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.databinding.ActivityMainBinding
-import com.example.newsapp.domain.adapter.ArticleAdapter
-import com.example.newsapp.domain.viewmodel.ArticleViewModel
+import com.example.newsapp.model.adapter.ArticleAdapter
+import com.example.newsapp.model.data.db.ArticleEntity
+import com.example.newsapp.viewmodel.ArticleViewModel
 import com.example.newsapp.utils.SnackbarAssistant
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -51,14 +52,19 @@ class MainActivity : AppCompatActivity() {
             this,
             articleViewModel,
             this, // Passando uma referência ao LifecycleOwner
-            { article ->
+            {
+                article ->
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
                 startActivity(intent)
+            },{
+                article ->
+                articleViewModel.toggleFavorite(article)
+                SnackbarAssistant.showSnackbar(binding.root, "Favorite updated")
+            },{
+                article ->
+                shareArticle(article)
             }
-        ) { article ->
-            articleViewModel.toggleFavorite(article)
-            SnackbarAssistant.showSnackbar(binding.root, "Favorite updated")
-        }
+        )
 
         binding.rvArticleMain.adapter = articleAdapter
 
@@ -81,4 +87,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun shareArticle(article: ArticleEntity) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "Confira esta notícia: ${article.title}\n\nLeia mais em: ${article.url}")
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia via"))
+    }
 }

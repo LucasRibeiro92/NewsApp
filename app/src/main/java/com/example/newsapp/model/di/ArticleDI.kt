@@ -1,8 +1,8 @@
-package com.example.newsapp.domain.di
+package com.example.newsapp.model.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.newsapp.domain.data.db.ArticleDatabase
+import com.example.newsapp.model.data.db.ArticleDatabase
 import com.example.newsapp.utils.Constants
 
 fun provideDatabase(context: Context) =

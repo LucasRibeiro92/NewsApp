@@ -1,15 +1,13 @@
-package com.example.newsapp.domain.viewmodel
+package com.example.newsapp.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.domain.data.db.ArticleEntity
-import com.example.newsapp.domain.repository.ArticleRepository
+import com.example.newsapp.model.data.db.ArticleEntity
+import com.example.newsapp.model.repository.ArticleRepository
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+
 class ArticleViewModel(
     private val articleRepository: ArticleRepository
 ) : ViewModel() {

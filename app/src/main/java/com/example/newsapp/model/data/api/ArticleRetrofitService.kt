@@ -1,8 +1,5 @@
-package com.example.newsapp.domain.data.api
+package com.example.newsapp.model.data.api
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.example.newsapp.domain.data.db.ArticleEntity
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

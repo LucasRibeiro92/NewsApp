@@ -1,6 +1,6 @@
-package com.example.newsapp.domain.data.api
+package com.example.newsapp.model.data.api
 
-import com.example.newsapp.domain.data.db.ArticleEntity
+import com.example.newsapp.model.data.db.ArticleEntity
 
 data class NewsApiResponse(
     val status: String,

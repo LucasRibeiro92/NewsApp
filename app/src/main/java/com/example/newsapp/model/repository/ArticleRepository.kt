@@ -1,8 +1,8 @@
-package com.example.newsapp.domain.repository
+package com.example.newsapp.model.repository
 
-import com.example.newsapp.domain.data.api.ArticleRetrofitService
-import com.example.newsapp.domain.data.db.ArticleDao
-import com.example.newsapp.domain.data.db.ArticleEntity
+import com.example.newsapp.model.data.api.ArticleRetrofitService
+import com.example.newsapp.model.data.db.ArticleDao
+import com.example.newsapp.model.data.db.ArticleEntity
 import com.example.newsapp.utils.Constants.API_KEY
 import com.example.newsapp.utils.Constants.API_LOCALE
 import kotlinx.coroutines.Dispatchers

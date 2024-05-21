@@ -1,4 +1,4 @@
-package com.example.newsapp.domain.data.api
+package com.example.newsapp.model.data.api
 
 import com.example.newsapp.utils.Constants.API_BASE_URL
 import retrofit2.Retrofit

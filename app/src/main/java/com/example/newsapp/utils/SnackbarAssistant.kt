@@ -21,6 +21,7 @@ object SnackbarAssistant {
         // Customize the text color
         val textView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
         textView.setTextColor(ContextCompat.getColor(view.context, R.color.mygreen))
+        textView.textSize = 18f
 
         // Customize the action button color
         val actionView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_action)

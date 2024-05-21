@@ -1,10 +1,9 @@
-package com.example.newsapp.domain.di
+package com.example.newsapp.model.di
 
-import com.example.newsapp.domain.data.api.ArticleRetrofitClient
-import com.example.newsapp.domain.data.db.ArticleDatabase
-import com.example.newsapp.domain.repository.ArticleRepository
-import com.example.newsapp.domain.viewmodel.ArticleViewModel
-import org.koin.android.ext.koin.androidContext
+import com.example.newsapp.model.data.api.ArticleRetrofitClient
+import com.example.newsapp.model.data.db.ArticleDatabase
+import com.example.newsapp.model.repository.ArticleRepository
+import com.example.newsapp.viewmodel.ArticleViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module

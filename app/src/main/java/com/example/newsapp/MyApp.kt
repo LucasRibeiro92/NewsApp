@@ -1,9 +1,8 @@
 package com.example.newsapp
 
 import android.app.Application
-import com.example.newsapp.domain.di.articleModule
+import com.example.newsapp.model.di.articleModule
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.startKoin
 
 class MyApp : Application() {
     override fun onCreate() {

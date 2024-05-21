@@ -2,12 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    tools:context=".view.MainActivity">
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_black_italic"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="24dp"
+        android:text="News"
+        android:textColor="@color/myred"
+        android:textSize="28sp" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tvHeader">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvArticleMain"

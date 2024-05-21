@@ -1,11 +1,10 @@
-package com.example.newsapp.domain.data.db
+package com.example.newsapp.model.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.newsapp.utils.Constants.ARTICLE_TABLE
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArticleDao {
