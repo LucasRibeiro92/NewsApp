@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.databinding.ActivityMainBinding
 import com.example.newsapp.model.adapter.ArticleAdapter
 import com.example.newsapp.model.data.db.ArticleEntity
+import com.example.newsapp.utils.AppError
 import com.example.newsapp.viewmodel.ArticleViewModel
 import com.example.newsapp.utils.SnackbarAssistant
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,7 +47,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
 
-        binding.rvArticleMain.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        binding.rvArticleMain.layoutManager = layoutManager
         // Fornecer uma referência ao LifecycleOwner ao criar o ArticleAdapter
         articleAdapter = ArticleAdapter(
             emptyList(),
@@ -68,31 +71,57 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvArticleMain.adapter = articleAdapter
 
+        binding.rvArticleMain.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!articleViewModel.isLoading && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    articleViewModel.loadMoreArticles()
+                }
+            }
+        })
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             articleViewModel.fetchArticles()
             // Mostrar Snackbar quando a lista for atualizada
-            SnackbarAssistant.showSnackbar(binding.root, "Articles list is up to date")
+            SnackbarAssistant.showSnackbar(binding.root, "News refreshed")
         }
     }
 
     private fun observeViewModel() {
+
         articleViewModel.articles.observe(this) { articles ->
             articles?.let {
                 articleAdapter.updateArticles(it)
                 binding.swipeRefreshLayout.isRefreshing = false
            }
         }
+
+        articleViewModel.error.observe(this) { error ->
+            error?.let {
+                val message = when (error) {
+                    is AppError.NetworkError -> error.message
+                    is AppError.DatabaseError -> error.message
+                    is AppError.UnknownError -> error.message
+                }
+                if (message != null) {
+                    SnackbarAssistant.showSnackbar(binding.root, message)
+                }
+            }
+        }
     }
 
     private fun shareArticle(article: ArticleEntity) {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "Confira esta notícia: ${article.title}\n\nLeia mais em: ${article.url}")
+            putExtra(Intent.EXTRA_TEXT, "Check this: ${article.title}\n\nRead more: ${article.url}")
             type = "text/plain"
         }
-        startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia via"))
+        startActivity(Intent.createChooser(shareIntent, "Share article with:"))
     }
 }

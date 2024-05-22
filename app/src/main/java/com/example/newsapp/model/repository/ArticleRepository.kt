@@ -3,6 +3,7 @@ package com.example.newsapp.model.repository
 import com.example.newsapp.model.data.api.ArticleRetrofitService
 import com.example.newsapp.model.data.db.ArticleDao
 import com.example.newsapp.model.data.db.ArticleEntity
+import com.example.newsapp.utils.AppError
 import com.example.newsapp.utils.Constants.API_KEY
 import com.example.newsapp.utils.Constants.API_LOCALE
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,8 @@ class ArticleRepository(
     private val articleDao: ArticleDao
 ) {
 
-    suspend fun fetchNewsArticles(onSuccess: (List<ArticleEntity>) -> Unit, onError: (Exception) -> Unit) {
+
+    suspend fun fetchNewsArticles(onSuccess: (List<ArticleEntity>) -> Unit, onError: (AppError) -> Unit) {
         withContext(Dispatchers.IO) {
             val call = apiService.getTopHeadlines(API_LOCALE, API_KEY)
             try {
@@ -22,30 +24,37 @@ class ArticleRepository(
                     val articles = response.body()?.articles ?: emptyList()
                     onSuccess(articles)
                 } else {
-                    onError(Exception("Error: ${response.code()} ${response.message()}"))
+                    onError(AppError.NetworkError("Error: ${response.code()} ${response.message()}"))
                 }
             } catch (e: Exception) {
-                onError(e)
+                onError(AppError.UnknownError("An unknown error occurred: ${e.message}"))
             }
         }
     }
 
+
     suspend fun toggleFavorite(article: ArticleEntity) {
         withContext(Dispatchers.IO) {
-            val existingArticle = articleDao.getArticleByUrl(article.url)
-            if (existingArticle != null) {
-                // Article is already a favorite, remove it from the database
-                articleDao.deleteByUrl(article.url)
-            } else {
-                // Article is not a favorite, add it to the database
-                articleDao.insert(article)
+            try {
+                val existingArticle = articleDao.getArticleByUrl(article.url)
+                if (existingArticle != null) {
+                    articleDao.deleteByUrl(article.url)
+                } else {
+                    articleDao.insert(article)
+                }
+            } catch (e: Exception) {
+                throw AppError.DatabaseError("Database operation failed: ${e.message}")
             }
         }
     }
 
     suspend fun isArticleFavorite(url: String): Boolean {
         return withContext(Dispatchers.IO) {
-            articleDao.getArticleByUrl(url) != null
+            try {
+                articleDao.getArticleByUrl(url) != null
+            } catch (e: Exception) {
+                throw AppError.DatabaseError("Database operation failed: ${e.message}")
+            }
         }
     }
 }
