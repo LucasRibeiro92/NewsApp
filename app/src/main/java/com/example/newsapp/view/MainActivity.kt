@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvArticleMain.adapter = articleAdapter
 
+
         binding.rvArticleMain.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -79,16 +80,16 @@ class MainActivity : AppCompatActivity() {
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
                 if (!articleViewModel.isLoading && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    articleViewModel.loadMoreArticles()
+                    articleViewModel.loadArticles(fromInfinite = true)
                 }
             }
         })
+
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             articleViewModel.fetchArticles()
-            // Mostrar Snackbar quando a lista for atualizada
             SnackbarAssistant.showSnackbar(binding.root, "News refreshed")
         }
     }

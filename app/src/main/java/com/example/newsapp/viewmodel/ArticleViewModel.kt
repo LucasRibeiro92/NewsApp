@@ -36,6 +36,7 @@ class ArticleViewModel(
                 onSuccess = { articles ->
                     allArticles = articles
                     _articles.postValue(articles)
+                    //loadArticles()
                     isLoading = false
                 },
                 onError = { appError ->
@@ -46,16 +47,20 @@ class ArticleViewModel(
         }
     }
 
-    fun loadMoreArticles() {
+    fun loadArticles(fromInfinite : Boolean = false) {
         val start = currentPage * pageSize
         val end = (currentPage + 1) * pageSize
-        if (start < allArticles.size) {
+        if (start < allArticles.size && fromInfinite) {
             val newArticles = allArticles.subList(start, minOf(end, allArticles.size))
             val currentList = _articles.value ?: listOf()
             _articles.postValue(currentList + newArticles)
             currentPage++
+        } else {
+            val currentList = _articles.value ?: listOf()
+            _articles.postValue(currentList)
         }
     }
+
 
     fun toggleFavorite(article: ArticleEntity) {
         viewModelScope.launch {
