@@ -29,24 +29,13 @@ class ArticleViewModel(
         fetchArticles()
     }
 
-    /*
-    fun fetchArticles() {
-        viewModelScope.launch {
-            articleRepository.fetchNewsArticles(
-                onSuccess = { _articles.postValue(it) },
-                onError = { it.printStackTrace() }
-            )
-        }
-    }
-    */
-
     fun fetchArticles() {
         isLoading = true
         viewModelScope.launch {
             articleRepository.fetchNewsArticles(
                 onSuccess = { articles ->
                     allArticles = articles
-                    loadMoreArticles()
+                    _articles.postValue(articles)
                     isLoading = false
                 },
                 onError = { appError ->
@@ -72,7 +61,7 @@ class ArticleViewModel(
         viewModelScope.launch {
             try {
                 articleRepository.toggleFavorite(article)
-                // Optionally refresh articles or update the favorite status locally
+                fetchArticles() // Atualiza a lista de artigos
             } catch (e: AppError.DatabaseError) {
                 _error.postValue(e)
             }
