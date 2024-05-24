@@ -61,7 +61,6 @@ class ArticleViewModel(
         }
     }
 
-
     fun toggleFavorite(article: ArticleEntity) {
         viewModelScope.launch {
             try {
