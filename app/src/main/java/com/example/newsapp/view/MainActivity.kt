@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
                 if (!articleViewModel.isLoading && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    articleViewModel.loadArticles(fromInfinite = true)
+                    articleViewModel.loadMoreArticles()
                 }
             }
         })

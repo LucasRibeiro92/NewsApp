@@ -35,8 +35,8 @@ class ArticleViewModel(
             articleRepository.fetchNewsArticles(
                 onSuccess = { articles ->
                     allArticles = articles
-                    _articles.postValue(articles)
-                    //loadArticles()
+                    //_articles.postValue(articles)
+                    loadInitialArticles()
                     isLoading = false
                 },
                 onError = { appError ->
@@ -47,17 +47,21 @@ class ArticleViewModel(
         }
     }
 
-    fun loadArticles(fromInfinite : Boolean = false) {
+    fun loadInitialArticles() {
+        currentPage = 0 // Reinicia a contagem de páginas
+        val initialArticles = allArticles.subList(0, minOf(9, allArticles.size))
+        _articles.postValue(initialArticles)
+        currentPage++
+    }
+
+    fun loadMoreArticles() {
         val start = currentPage * pageSize
         val end = (currentPage + 1) * pageSize
-        if (start < allArticles.size && fromInfinite) {
+        if (start < allArticles.size) {
             val newArticles = allArticles.subList(start, minOf(end, allArticles.size))
             val currentList = _articles.value ?: listOf()
             _articles.postValue(currentList + newArticles)
             currentPage++
-        } else {
-            val currentList = _articles.value ?: listOf()
-            _articles.postValue(currentList)
         }
     }
 
